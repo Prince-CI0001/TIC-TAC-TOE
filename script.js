@@ -75,7 +75,10 @@ function resetGame() {
   // console.log("reset the game");
   document.getElementById("start").style.backgroundColor = "#ffe4c4";
   let val = document.querySelectorAll(".sq");
-  for (i of val) i.innerHTML = "";
+  for (i of val){
+    i.innerHTML = "";
+    i.style.backgroundColor="#eeb1b1";
+  } 
   turn = "X";
   gameOver = false;
   document.getElementsByClassName("info").innerText = "Turn for " + turn;
