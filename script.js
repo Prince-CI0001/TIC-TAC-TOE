@@ -58,19 +58,19 @@ function start(e) {
   }
 }
 
-function Over() {
-  // console.log("over");
-  let boxes = document.querySelectorAll(".sq");
-  for(items of boxes)
-  {
-    items.addEventListener('click',(e)=>{
-      // e.target.setAttribute("class","stop");
-      e.target.style.backgroundColor = "red";
-      e.target.innerHTML = '';
-      // document.getElementsByClassName("stop").innerText="sorry";
-    })
-  }
-}
+// function Over() {
+//   // console.log("over");
+//   let boxes = document.querySelectorAll(".sq");
+//   for(items of boxes)
+//   {
+//     items.addEventListener('click',(e)=>{
+//       // e.target.setAttribute("class","stop");
+//       e.target.style.backgroundColor = "red";
+//       e.target.innerHTML = '';
+//       // document.getElementsByClassName("stop").innerText="sorry";
+//     })
+//   }
+// }
 function resetGame() {
   // console.log("reset the game");
   document.getElementById("start").style.backgroundColor = "#ffe4c4";
