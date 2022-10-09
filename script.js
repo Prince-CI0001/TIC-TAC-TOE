@@ -2,10 +2,12 @@ let boxes = document.querySelectorAll(".sq");
 let turn = "X";
 let gameOver = false;
 let count = 0;
-let changeTurn = () => {
-  return turn === "X" ? "0" : "X";
-};
+
+let fullPostRequest = "";
+let postBaseApiLink = "https://localhost:7190/api/Game?location=";
+
 let checkWin = () => {
+  console.log("hello");
   let data = document.getElementsByClassName("sq");
   let condition = [
     [0, 1, 2, 4, 4, 0],
@@ -24,29 +26,47 @@ let checkWin = () => {
       data[element[0]].innerText !== ""
     ) {
       document.getElementsByClassName("info")[0].innerText =
-        data[element[0]].innerText + " WON";
+      data[element[0]].innerText + " WON";
       gameOver = true;
       document.getElementById("win-gif").style.display = "block";
       document.querySelector(".line").style.width = "80%";
-      document.querySelector(
-        ".line"
-      ).style.transform = `translate(${element[3]}vw,${element[4]}vw) rotate(${element[5]}deg)`;
+      document.querySelector(".line").style.transform = `translate(${element[3]}vw,${element[4]}vw) rotate(${element[5]}deg)`;
       Over();
     }
   });
 };
-function start(e) {
+async function start(e) {
   e.target.style.backgroundColor = "#caf0f8";
   for (items of boxes) {
-    items.addEventListener("click", (e) => {
+    items.addEventListener("click", async (e) => {
       buttonText = e.target.innerText;
       count++;
+      let cordinate = e.target.id;
+      fullPostRequest = postBaseApiLink + cordinate;
       if (buttonText === "") {
-        e.target.innerText = turn;
-        turn = changeTurn();
+        e.target.innerText = "X";
         checkWin();
-        if (!gameOver) {
 
+        console.log(fullPostRequest);
+       const response =  await fetch(fullPostRequest, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        });
+
+        response.json().then((data)=>{
+          console.log(data);
+          let title = data.Id;
+          console.log(title);
+          document.getElementById(title).innerText="O";
+          checkWin();
+          return data.Id;
+        })
+        .catch(error => console.error('Unable to add item.', error));
+
+        if (!gameOver) {
           document.getElementsByClassName("info")[0].innerText =
             "Turn for " + turn;
           if (count == 9) {
@@ -58,19 +78,6 @@ function start(e) {
   }
 }
 
-// function Over() {
-//   // console.log("over");
-//   let boxes = document.querySelectorAll(".sq");
-//   for(items of boxes)
-//   {
-//     items.addEventListener('click',(e)=>{
-//       // e.target.setAttribute("class","stop");
-//       e.target.style.backgroundColor = "red";
-//       e.target.innerHTML = '';
-//       // document.getElementsByClassName("stop").innerText="sorry";
-//     })
-//   }
-// }
 function resetGame() {
   // console.log("reset the game");
   document.getElementById("start").style.backgroundColor = "#ffe4c4";
@@ -78,7 +85,7 @@ function resetGame() {
   for (i of val){
     i.innerHTML = "";
     i.style.backgroundColor="#eeb1b1";
-  } 
+  }
   turn = "X";
   gameOver = false;
   document.getElementsByClassName("info").innerText = "Turn for " + turn;
