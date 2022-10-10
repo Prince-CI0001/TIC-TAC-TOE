@@ -1,11 +1,8 @@
 let boxes = document.querySelectorAll(".sq");
-let turn = "X";
 let gameOver = false;
 let count = 0;
+let ApiLink = "https://localhost:7279/api/Game";
 
-let fullPostRequest = "";
-let postBaseApiLink = "https://localhost:7279/api/Game?location=";
-let getEmptyMatrix = "https://localhost:7279/api/Game";
 
 let checkWin = () => {
   console.log("hello");
@@ -42,22 +39,20 @@ async function start(e) {
       buttonText = e.target.innerText;
       count++;
       let cordinate = e.target.id;
-      fullPostRequest = postBaseApiLink + cordinate;
       if (buttonText === "") {
         e.target.innerText = "X";
         checkWin();
 
 
-       const response =  await fetch(fullPostRequest, {
+       const response =  await fetch(ApiLink, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
+          body : JSON.stringify(cordinate)
         });
         response.json().then((data)=>{
-        //  console.log(data);
-        //  console.log(title);
         let title;
         if(data != null)
         {
@@ -101,7 +96,7 @@ function resetGame() {
 
 let EmptyMatrix = async () => {
 
-  await fetch(getEmptyMatrix).then(data => {
+  await fetch(ApiLink).then(data => {
     console.log(data);
     return data.json();
   }).catch(error => console.error("error:" , error));
