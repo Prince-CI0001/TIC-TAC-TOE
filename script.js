@@ -4,7 +4,8 @@ let gameOver = false;
 let count = 0;
 
 let fullPostRequest = "";
-let postBaseApiLink = "https://localhost:7190/api/Game?location=";
+let postBaseApiLink = "https://localhost:7279/api/Game?location=";
+let getEmptyMatrix = "https://localhost:7279/api/Game";
 
 let checkWin = () => {
   console.log("hello");
@@ -31,7 +32,6 @@ let checkWin = () => {
       document.getElementById("win-gif").style.display = "block";
       document.querySelector(".line").style.width = "80%";
       document.querySelector(".line").style.transform = `translate(${element[3]}vw,${element[4]}vw) rotate(${element[5]}deg)`;
-      Over();
     }
   });
 };
@@ -47,7 +47,7 @@ async function start(e) {
         e.target.innerText = "X";
         checkWin();
 
-        console.log(fullPostRequest);
+
        const response =  await fetch(fullPostRequest, {
           method: 'POST',
           headers: {
@@ -55,20 +55,25 @@ async function start(e) {
             'Content-Type': 'application/json'
           },
         });
-
         response.json().then((data)=>{
-          console.log(data);
-          let title = data.Id;
+        //  console.log(data);
+        //  console.log(title);
+        let title;
+        if(data != null)
+        {
+          title = data.Id;
           console.log(title);
-          document.getElementById(title).innerText="O";
+            document.getElementById(title).innerText="O";
+          count++;
           checkWin();
+        }
           return data.Id;
         })
         .catch(error => console.error('Unable to add item.', error));
 
         if (!gameOver) {
           document.getElementsByClassName("info")[0].innerText =
-            "Turn for " + turn;
+            "Turn for " + 'X';
           if (count == 9) {
             document.getElementsByClassName("info")[0].innerText = "DRAW";
           }
@@ -80,15 +85,25 @@ async function start(e) {
 
 function resetGame() {
   // console.log("reset the game");
+  EmptyMatrix();
   document.getElementById("start").style.backgroundColor = "#ffe4c4";
   let val = document.querySelectorAll(".sq");
   for (i of val){
     i.innerHTML = "";
     i.style.backgroundColor="#eeb1b1";
   }
-  turn = "X";
   gameOver = false;
-  document.getElementsByClassName("info").innerText = "Turn for " + turn;
+  document.getElementsByClassName("info")[0].innerText = "Turn for " + 'X';
   document.querySelector(".line").style.width = "0";
   document.getElementById("win-gif").style.display = "none";
+}
+
+
+let EmptyMatrix = async () => {
+
+  await fetch(getEmptyMatrix).then(data => {
+    console.log(data);
+    return data.json();
+  }).catch(error => console.error("error:" , error));
+
 }
