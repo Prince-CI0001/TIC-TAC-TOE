@@ -42,30 +42,7 @@ async function start(e) {
       if (buttonText === "") {
         e.target.innerText = "X";
         checkWin();
-
-
-       const response =  await fetch(ApiLink, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body : JSON.stringify(cordinate)
-        });
-        response.json().then((data)=>{
-        let title;
-        if(data != null)
-        {
-          title = data.Id;
-          console.log(title);
-            document.getElementById(title).innerText="O";
-          count++;
-          checkWin();
-        }
-          return data.Id;
-        })
-        .catch(error => console.error('Unable to add item.', error));
-
+        FillCoordinate(cordinate);
         if (!gameOver) {
           document.getElementsByClassName("info")[0].innerText =
             "Turn for " + 'X';
@@ -101,4 +78,24 @@ let EmptyMatrix = async () => {
     return data.json();
   }).catch(error => console.error("error:" , error));
 
+}
+
+let FillCoordinate = async (cordinate) =>{
+  const response =  await fetch(ApiLink, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body : JSON.stringify(cordinate)
+  });
+  response.json().then((data)=>{
+  if(data != null)
+  {
+      document.getElementById(data).innerText="O";
+    count++;
+    checkWin();
+  }
+  })
+  .catch(error => console.error('Unable to add item.', error));
 }
