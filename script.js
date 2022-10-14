@@ -1,7 +1,21 @@
 let boxes = document.querySelectorAll(".sq");
 let count = 0;
-let ApiLink = "https://localhost:7279/api/Game";
-
+var id = 1;
+let apiLink = "https://localhost:7279/api/Game";
+let createNewGame = async () =>{
+  const response = await fetch(apiLink, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  response.json().then((data) => {
+    if(data != null)
+      console.log(data);
+  }).catch((err)=> console.log(err));
+ }
+createNewGame();
 
 let checkWin = () => {
 
@@ -22,6 +36,7 @@ let checkWin = () => {
       data[element[2]].innerText === data[element[1]].innerText &&
       data[element[0]].innerText !== ""
     ) {
+      UpdateWinner(data[element[0]].innerText);
       document.getElementsByClassName("info")[0].innerText =
         data[element[0]].innerText + " WON";
       document.getElementById("win-gif").style.display = "block";
@@ -30,6 +45,23 @@ let checkWin = () => {
     }
   });
 };
+
+let myFunction = (e) =>{
+  buttonText = e.target.innerText;
+      count++;
+      console.log(count);
+      let cordinate = e.target.id;
+      if (buttonText === "") {
+        e.target.innerText = "X";
+        checkWin();
+        FillCoordinate(cordinate);
+        if (count == 9) {
+          UpdateWinner("DRAW");
+          document.getElementsByClassName("info")[0].innerText = "DRAW";
+        }
+
+      }
+ }
 function start(e) {
   e.target.style.backgroundColor = "#caf0f8";
   for (items of boxes) {
@@ -38,8 +70,8 @@ function start(e) {
 }
 
 function resetGame() {
-  // console.log("reset the game");
-  EmptyMatrix();
+  id++;
+  createNewGame();
   document.getElementById("start").style.backgroundColor = "#ffe4c4";
   let val = document.querySelectorAll(".sq");
   for (i of val) {
@@ -56,17 +88,21 @@ function resetGame() {
   }
 }
 
+ let UpdateWinner = async (winner) => {
+  const response = await fetch(apiLink + '/' + id + '/winner'  , {
+    method: 'PATCH',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(winner)
+  });
+  response.json().catch(error => console.error('Unable to add winner.', error));
+ }
 
-let EmptyMatrix = async () => {
-  await fetch(ApiLink).then(data => {
-    return data;
-  }).catch(error => console.error("error:", error));
-
-}
-
-let FillCoordinate = async (cordinate) => {
-  const response = await fetch(ApiLink, {
-    method: 'POST',
+ let FillCoordinate = async (cordinate) => {
+  const response = await fetch(apiLink + '/' + id , {
+    method: 'PATCH',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -82,21 +118,4 @@ let FillCoordinate = async (cordinate) => {
     }
   })
     .catch(error => console.error('Unable to add item.', error));
- }
-
-
- let myFunction = (e) =>{
-  buttonText = e.target.innerText;
-      count++;
-      console.log(count);
-      let cordinate = e.target.id;
-      if (buttonText === "") {
-        e.target.innerText = "X";
-        checkWin();
-        FillCoordinate(cordinate);
-        if (count == 9) {
-          document.getElementsByClassName("info")[0].innerText = "DRAW";
-        }
-
-      }
  }
