@@ -1,5 +1,7 @@
 let boxes = document.querySelectorAll(".sq");
 let count = 0;
+let xcount=0;
+let ocount=0;
 var id = 1;
 let apiLink = "https://localhost:7279/api/Game";
 let createNewGame = async () =>{
@@ -36,7 +38,17 @@ let checkWin = () => {
       data[element[2]].innerText === data[element[1]].innerText &&
       data[element[0]].innerText !== ""
     ) {
-      UpdateWinner(data[element[0]].innerText);
+      if(data[element[0]].innerText == "X")
+      xcount++;
+      else
+      ocount++;
+      let object = {
+        "winner": data[element[0]].innerText,
+        "xCount": xcount,
+        "oCount":ocount,
+      }
+      //UpdateWinner(data[element[0]].innerText);
+      UpdateWinner(object);
       document.getElementsByClassName("info")[0].innerText =
         data[element[0]].innerText + " WON";
       document.getElementById("win-gif").style.display = "block";
@@ -56,7 +68,12 @@ let myFunction = (e) =>{
         checkWin();
         FillCoordinate(cordinate);
         if (count == 9) {
-          UpdateWinner("DRAW");
+          let object = {
+            "winner": "DRAW",
+            "xCount": xcount,
+            "oCount":ocount,
+          }
+          UpdateWinner(object);
           document.getElementsByClassName("info")[0].innerText = "DRAW";
         }
 
@@ -88,14 +105,14 @@ function resetGame() {
   }
 }
 
- let UpdateWinner = async (winner) => {
+ let UpdateWinner = async (obj) => {
   const response = await fetch(apiLink + '/' + id + '/winner'  , {
     method: 'PATCH',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(winner)
+    body: JSON.stringify(obj)
   });
   response.json().catch(error => console.error('Unable to add winner.', error));
  }
