@@ -3,7 +3,7 @@ let count = 0;
 let xcount=0;
 let ocount=0;
 var id = 1;
-let apiLink = "https://localhost:7279/api/Game";
+let apiLink = "https://localhost:7279/api/games";
 let createNewGame = async () =>{
   const response = await fetch(apiLink, {
     method: 'POST',
